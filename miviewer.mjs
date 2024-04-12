@@ -1,15 +1,29 @@
 import { getAllDescendants } from "./base_mods/access_node.mjs"
+import { query_ancestor_by_class_name } from "./base_mods/query_ancestor.js";
 
 /* 下面三行用于获取当前脚本的目录 */
 const currentScriptUrl = import.meta.url;
 const curr_script_path = new URL(currentScriptUrl).pathname;
 const curr_script_dir_path = curr_script_path.substring(0, curr_script_path.lastIndexOf('/'));
 
-export async function empower_miviewer(miviewer_container, options = { filter: null }) {
-    // 获取 miviewer_container 的所有类名含有 miviewer-item 的子孙元素，并存储到 arr_of_miviewer_item 中
-    let arr_of_miviewer_item = getAllDescendants(miviewer_container, options.filter)
+export async function pop_up_miviewer_container_in_time(element, options = { filter: null, miviewer_item_class_name: 'miviewer-item' }) {
+    let miviewer_container = query_ancestor_by_class_name(element, 'miviewer-container')
+    let arr_of_miviewer_item = getAllDescendants(miviewer_container/* , e => {
+        // 如果元素的类名包含 miviewer_item_class_name，并且 filter!==null 时，继续用 filter 去筛选
+        if (e.classList.contains(options.miviewer_item_class_name) && options.filter !== null) {
+            return options.filter(e)
+        } else {
+            return false
+        }
+    } */)
+    pop_up_miviewer_container(element, arr_of_miviewer_item, options)
+}
 
-    // 为每一个 miviewer-item 元素添加事件监听器，这个事件监听器的功能是点击后就打开 miviewer_player，并且 miviewer_player 中就会展览 arr_of_miviewer_item 中的所有图片或视频
+export async function empower_miviewer(conainter, options = { filter: null }) {
+    // 获取 container 的所有类名含有的子孙元素，并存储到 arr_of_miviewer_item 中
+    let arr_of_miviewer_item = getAllDescendants(conainter, options.filter)
+
+    // 为每一个元素添加事件监听器，这个事件监听器的功能是点击后就打开 miviewer_player，并且 miviewer_player 中就会展览 arr_of_miviewer_item 中的所有图片或视频
     arr_of_miviewer_item.forEach(miviewer_item => {
         // 这个监听器是一个闭包，会把 miviewer_item 保留下来，就算 empower_miviewer 结束运行
         miviewer_item.addEventListener('click', event => {

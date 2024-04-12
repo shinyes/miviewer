@@ -13,7 +13,7 @@
             margin: 0;
         }
 
-        .container {
+        .miviewer-container {
             display: grid;
             grid-template-columns: repeat(auto-fill, 10vh);
             grid-auto-rows: 10vh;
@@ -23,8 +23,8 @@
             /* 垂直居中 */
         }
 
-        .container>img,
-        .container>video {
+        .miviewer-container>img,
+        .miviewer-container>video {
             max-width: 100%;
             /* 图片和视频元素的最大宽度为其父容器的宽度 */
             max-height: 100%;
@@ -35,23 +35,24 @@
 </head>
 
 <body>
-    <div class="container">
-        <img src="./assets/play.svg">
-        <img src="./assets/times.svg">
+    <div class="miviewer-container">
+        <img class="miviewer-item" src="./assets/play.svg">
+        <img class="miviewer-item" src="./assets/times.svg">
     </div>
-    <div class="container">
-        <img class="ignore" src="./assets/play.svg">
-        <img src="./assets/play.svg">
+    <div class="miviewer-container">
+        <img class="miviewer-item" src="./assets/play.svg">
+        <img class="miviewer-item ignore" src="./assets/play.svg">
+        <img class="miviewer-item" src="./assets/times.svg">
     </div>
 </body>
 
-<script type="module">
+<!-- <script type="module">
     import { empower_miviewer } from "./miviewer.mjs"
-    let containers = document.querySelectorAll('.container')
+    let containers = document.querySelectorAll('.miviewer-container')
 
     containers.forEach(e => {
         empower_miviewer(
-            // 将 `.container` 容器中的子孙元素中的图片或视频元素加入到一个 miviewer 中
+            // 将 `.miviewer-container` 容器中的子孙元素中的图片或视频元素加入到一个 miviewer 中
             e,
             // 第二个 JSON 对象是可选的
             {
@@ -65,6 +66,18 @@
                 }
             }
         )
+    })
+</script> -->
+
+<script type="module">
+    import { pop_up_miviewer_container_in_time } from "./miviewer.mjs"
+    let containers = document.querySelectorAll('.miviewer-container')
+    containers.forEach(container => {
+        Array.from(container.children).forEach(e => {
+            e.addEventListener('click', event => {
+                pop_up_miviewer_container_in_time(event.target)
+            })
+        })
     })
 </script>
 
