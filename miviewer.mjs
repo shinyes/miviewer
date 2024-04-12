@@ -6,20 +6,22 @@ const currentScriptUrl = import.meta.url;
 const curr_script_path = new URL(currentScriptUrl).pathname;
 const curr_script_dir_path = curr_script_path.substring(0, curr_script_path.lastIndexOf('/'));
 
-export async function pop_up_miviewer_container_in_time(element, options = { filter: null, miviewer_item_class_name: 'miviewer-item' }) {
+export async function recreate_miviewer_container(element, options = { filter: null, miviewer_item_class_name: 'miviewer-item' }) {
     let miviewer_container = query_ancestor_by_class_name(element, 'miviewer-container')
-    let arr_of_miviewer_item = getAllDescendants(miviewer_container/* , e => {
+    let arr_of_miviewer_item = getAllDescendants(miviewer_container, e => {
         // 如果元素的类名包含 miviewer_item_class_name，并且 filter!==null 时，继续用 filter 去筛选
-        if (e.classList.contains(options.miviewer_item_class_name) && options.filter !== null) {
+        if (options.filter === null) {
+            return true
+        } else if (e.classList.contains(options.miviewer_item_class_name)) {
             return options.filter(e)
         } else {
             return false
         }
-    } */)
+    })
     pop_up_miviewer_container(element, arr_of_miviewer_item, options)
 }
 
-export async function empower_miviewer(conainter, options = { filter: null }) {
+export async function create_miviewer_container(conainter, options = { filter: null }) {
     // 获取 container 的所有类名含有的子孙元素，并存储到 arr_of_miviewer_item 中
     let arr_of_miviewer_item = getAllDescendants(conainter, options.filter)
 

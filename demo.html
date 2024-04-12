@@ -70,12 +70,12 @@
 </script> -->
 
 <script type="module">
-    import { pop_up_miviewer_container_in_time } from "./miviewer.mjs"
+    import { recreate_miviewer_container } from "./miviewer.mjs"
     let containers = document.querySelectorAll('.miviewer-container')
     containers.forEach(container => {
         Array.from(container.children).forEach(e => {
             e.addEventListener('click', event => {
-                pop_up_miviewer_container_in_time(event.target)
+                recreate_miviewer_container(event.target)
             })
         })
     })
