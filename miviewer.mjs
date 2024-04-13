@@ -1,18 +1,15 @@
 import { getAllDescendants } from "./base_mods/access_node.mjs"
 import { query_ancestor_by_class_name } from "./base_mods/query_ancestor.js";
+import { miviewer_container, showcase, close_miviewer_btn, angle_left, angle_right } from "./miviewer_container.js";
 
-/* 下面三行用于获取当前脚本的目录 */
-const currentScriptUrl = import.meta.url;
-const curr_script_path = new URL(currentScriptUrl).pathname;
-const curr_script_dir_path = curr_script_path.substring(0, curr_script_path.lastIndexOf('/'));
 
-export async function recreate_miviewer_container(element, options = { filter: null, miviewer_item_class_name: 'miviewer-item' }) {
-    let miviewer_container = query_ancestor_by_class_name(element, 'miviewer-container')
-    let arr_of_miviewer_item = getAllDescendants(miviewer_container, e => {
+export async function recreate_miviewer_container(element, options = { filter: null, item_class_name: 'miviewer-item', container_class_name: 'miviewer-container' }) {
+    let container = query_ancestor_by_class_name(element, options.container_class_name)
+    let arr_of_miviewer_item = getAllDescendants(container, e => {
         // 如果元素的类名包含 miviewer_item_class_name，并且 filter!==null 时，继续用 filter 去筛选
         if (options.filter === null) {
             return true
-        } else if (e.classList.contains(options.miviewer_item_class_name)) {
+        } else if (e.classList.contains(options.item_class_name)) {
             return options.filter(e)
         } else {
             return false
@@ -34,51 +31,6 @@ export async function create_miviewer_container(conainter, options = { filter: n
         })
     });
 }
-
-/* miviewer_container 是在一个网页中式唯一的，当点击视频后，弹出，并播放 */
-let miviewer_container = document.createElement('div')
-miviewer_container.id = 'miviewer-container'
-
-/* 创建顶部条、展览框和底部阅览条的元素 */
-let top_bar = document.createElement('div')
-top_bar.id = 'top-bar'
-miviewer_container.appendChild(top_bar)
-
-/* 这个元素放在 miviewer_container 的右上角，点击之后关闭 miviewer_container */
-let close_miviewer_btn = document.createElement('img')
-close_miviewer_btn.src = curr_script_dir_path + '/' + 'assets/times.svg'
-close_miviewer_btn.id = 'close-miviewer'
-top_bar.appendChild(close_miviewer_btn)
-
-// 创建中间容器
-let mid_bar = document.createElement('div')
-mid_bar.id = 'mid-bar'
-miviewer_container.appendChild(mid_bar)
-
-let left_column = document.createElement('div')
-left_column.id = 'left-column'
-mid_bar.appendChild(left_column)
-
-let showcase = document.createElement('div')
-showcase.id = 'showcase'
-mid_bar.appendChild(showcase)
-
-let right_column = document.createElement('div')
-right_column.id = 'right-column'
-mid_bar.appendChild(right_column)
-
-let btm_bar = document.createElement('div')
-btm_bar.id = 'btm-bar'
-miviewer_container.appendChild(btm_bar)
-
-let angle_left = document.createElement('img')
-angle_left.id = 'angle-left'
-angle_left.src = curr_script_dir_path + '/' + 'assets/angle-left.svg'
-let angle_right = document.createElement('img')
-angle_right.id = 'angle-right'
-angle_right.src = curr_script_dir_path + '/' + 'assets/angle-right.svg'
-left_column.appendChild(angle_left)
-right_column.appendChild(angle_right)
 
 /* 
 展览 arr_of_miviewer_item 中的图片或视频
