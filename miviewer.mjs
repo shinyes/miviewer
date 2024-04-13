@@ -7,12 +7,13 @@ export async function recreate_miviewer_container(element, options = { filter: n
     let container = query_ancestor_by_class_name(element, options.container_class_name)
     let arr_of_miviewer_item = getAllDescendants(container, e => {
         // 如果元素的类名包含 miviewer_item_class_name，并且 filter!==null 时，继续用 filter 去筛选
+        if (!e.classList.contains(options.item_class_name)) {
+            return false
+        }
         if (options.filter === null) {
             return true
-        } else if (e.classList.contains(options.item_class_name)) {
-            return options.filter(e)
         } else {
-            return false
+            return options.filter(e)
         }
     })
     set_browsing_progress(arr_of_miviewer_item.indexOf(element) + 1, arr_of_miviewer_item.length)
