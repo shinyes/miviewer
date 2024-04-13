@@ -13,6 +13,12 @@ let top_bar = document.createElement('div')
 top_bar.id = 'top-bar'
 miviewer_container.appendChild(top_bar)
 
+/* 创建浏览进度 */
+export let browsing_progress = document.createElement('div')
+browsing_progress.id = 'browsing-progress'
+top_bar.appendChild(browsing_progress)
+
+
 /* 这个元素放在 miviewer_container 的右上角，点击之后关闭 miviewer_container */
 export let close_miviewer_btn = document.createElement('img')
 close_miviewer_btn.src = curr_script_dir_path + '/' + 'assets/times.svg'

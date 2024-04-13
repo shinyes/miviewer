@@ -1,6 +1,6 @@
 import { getAllDescendants } from "./base_mods/access_node.mjs"
 import { query_ancestor_by_class_name } from "./base_mods/query_ancestor.js";
-import { miviewer_container, showcase, close_miviewer_btn, angle_left, angle_right } from "./miviewer_container.js";
+import { miviewer_container, browsing_progress, close_miviewer_btn, showcase, angle_left, angle_right } from "./miviewer_container.js";
 
 
 export async function recreate_miviewer_container(element, options = { filter: null, item_class_name: 'miviewer-item', container_class_name: 'miviewer-container' }) {
@@ -15,6 +15,7 @@ export async function recreate_miviewer_container(element, options = { filter: n
             return false
         }
     })
+    set_browsing_progress(arr_of_miviewer_item.indexOf(element) + 1, arr_of_miviewer_item.length)
     pop_up_miviewer_container(element, arr_of_miviewer_item, options)
 }
 
@@ -99,6 +100,7 @@ angle_left.addEventListener('click', event => {
     if (previousElementSibling !== null) {
         curr_show_resc.style.display = 'none'
         previousElementSibling.style.display = 'block'
+        browsing_progress_reduced_by_1()
     }
 })
 
@@ -109,5 +111,24 @@ angle_right.addEventListener('click', event => {
     if (nextElementSibling !== null) {
         curr_show_resc.style.display = 'none'
         nextElementSibling.style.display = 'block'
+        browsing_progress_increased_by_1()
     }
 })
+
+/* 用于显示浏览进度 */
+function set_browsing_progress(curr_progress, totality) {
+    console.log(browsing_progress)
+    browsing_progress.textContent = curr_progress.toString() + '/' + totality.toString()
+}
+function browsing_progress_increased_by_1() {
+    let text = browsing_progress.textContent
+    let index_of_slash = text.indexOf('/')
+    let previous_progress = parseInt(text.substring(0, index_of_slash))
+    browsing_progress.textContent = (previous_progress + 1).toString() + text.substring(index_of_slash)
+}
+function browsing_progress_reduced_by_1() {
+    let text = browsing_progress.textContent
+    let index_of_slash = text.indexOf('/')
+    let previous_progress = parseInt(text.substring(0, index_of_slash))
+    browsing_progress.textContent = (previous_progress - 1).toString() + text.substring(index_of_slash)
+}
