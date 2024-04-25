@@ -1,46 +1,39 @@
 import { getAllDescendants } from "./base_mods/access_node.mjs"
 import { query_ancestor_by_class_name } from "./base_mods/query_ancestor.js";
-import { miviewer_container, browsing_progress, close_miviewer_btn, showcase, angle_left, angle_right } from "./miviewer_container.js";
+import { miviewer_container, browsing_progress, close_miviewer_btn, showcase, angle_left, angle_right } from "./miviewer_container.mjs";
 
 
-export async function recreate_miviewer_container(element, options = { filter: null, item_class_name: 'miviewer-item', container_class_name: 'miviewer-container' }) {
-    let container = query_ancestor_by_class_name(element, options.container_class_name)
+export async function recreate_miviewer_container(element, {
+    filter = null,
+    item_class_name = 'miviewer-item',
+    container_class_name = 'miviewer-container',
+    gen_actual_item = function (item) {
+        return item.cloneNode();
+    } }
+) {
+    let container = query_ancestor_by_class_name(element, container_class_name)
     let arr_of_miviewer_item = getAllDescendants(container, e => {
         // 如果元素的类名包含 miviewer_item_class_name，并且 filter!==null 时，继续用 filter 去筛选
-        if (!e.classList.contains(options.item_class_name)) {
+        if (!e.classList.contains(item_class_name)) {
             return false
         }
-        if (options.filter === null) {
+        if (filter === null) {
             return true
         } else {
-            return options.filter(e)
+            return filter(e)
         }
     })
     set_browsing_progress(arr_of_miviewer_item.indexOf(element) + 1, arr_of_miviewer_item.length)
-    pop_up_miviewer_container(element, arr_of_miviewer_item, options)
-}
-
-export async function create_miviewer_container(conainter, options = { filter: null }) {
-    // 获取 container 的所有类名含有的子孙元素，并存储到 arr_of_miviewer_item 中
-    let arr_of_miviewer_item = getAllDescendants(conainter, options.filter)
-
-    // 为每一个元素添加事件监听器，这个事件监听器的功能是点击后就打开 miviewer_player，并且 miviewer_player 中就会展览 arr_of_miviewer_item 中的所有图片或视频
-    arr_of_miviewer_item.forEach(miviewer_item => {
-        // 这个监听器是一个闭包，会把 miviewer_item 保留下来，就算 empower_miviewer 结束运行
-        miviewer_item.addEventListener('click', event => {
-            // 打开 miviewer_container
-            pop_up_miviewer_container(event.target, arr_of_miviewer_item, options)
-        })
-    });
+    pop_up_miviewer_container(element, arr_of_miviewer_item, gen_actual_item)
 }
 
 /* 
 展览 arr_of_miviewer_item 中的图片或视频
 */
-function pop_up_miviewer_container(target, arr_of_miviewer_item, options = {}) {
+function pop_up_miviewer_container(target, arr_of_miviewer_item, gen_actual_item) {
     arr_of_miviewer_item.forEach(item => {
         // 复制一份新的节点，方便展示
-        let t = item.cloneNode()
+        let t = gen_actual_item(item)
         // 点击的那个图片/视频显示，其他的不显示
         if (item !== target) {
             t.style.display = 'none'
@@ -118,7 +111,6 @@ angle_right.addEventListener('click', event => {
 
 /* 用于显示浏览进度 */
 function set_browsing_progress(curr_progress, totality) {
-    console.log(browsing_progress)
     browsing_progress.textContent = curr_progress.toString() + '/' + totality.toString()
 }
 function browsing_progress_increased_by_1() {
